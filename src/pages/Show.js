@@ -1,18 +1,20 @@
-import React, { useEffect, useReducer } from "react";
-import { useParams } from "react-router-dom";
-import Cast from "../components/show/Cast";
-import Details from "../components/show/Details";
-import Seasons from "../components/show/Seasons";
-import ShowMainData from "../components/show/ShowMainData";
-import { apiGet } from "../misc/config";
+/* eslint-disable no-underscore-dangle */
+import React, { useEffect, useReducer } from 'react';
+import { useParams } from 'react-router-dom';
+import { apiGet } from '../misc/config';
+import ShowMainData from '../components/show/ShowMainData';
+import Details from '../components/show/Details';
+import Seasons from '../components/show/Seasons';
+import Cast from '../components/show/Cast';
+import { ShowPageWrapper, InfoBlock } from './Show.styled';
 
 const reducer = (prevState, action) => {
   switch (action.type) {
-    case "FETCH_SUCCESS": {
+    case 'FETCH_SUCCESS': {
       return { isLoading: false, error: null, show: action.show };
     }
 
-    case "FETCH_FAILED": {
+    case 'FETCH_FAILED': {
       return { ...prevState, isLoading: false, error: action.error };
     }
 
@@ -39,14 +41,14 @@ const Show = () => {
     let isMounted = true;
 
     apiGet(`/shows/${id}?embed[]=seasons&embed[]=cast`)
-      .then((results) => {
+      .then(results => {
         if (isMounted) {
-          dispatch({ type: "FETCH_SUCCESS", show: results });
+          dispatch({ type: 'FETCH_SUCCESS', show: results });
         }
       })
-      .catch((err) => {
+      .catch(err => {
         if (isMounted) {
-          dispatch({ type: "FETCH_FAILED", error: err.message });
+          dispatch({ type: 'FETCH_FAILED', error: err.message });
         }
       });
 
@@ -54,8 +56,6 @@ const Show = () => {
       isMounted = false;
     };
   }, [id]);
-
-  console.log("show", show);
 
   if (isLoading) {
     return <div>Data is being loaded</div>;
@@ -66,7 +66,7 @@ const Show = () => {
   }
 
   return (
-    <div>
+    <ShowPageWrapper>
       <ShowMainData
         image={show.image}
         name={show.name}
@@ -74,25 +74,26 @@ const Show = () => {
         summary={show.summary}
         tags={show.genres}
       />
-      <div>
+
+      <InfoBlock>
         <h2>Details</h2>
         <Details
           status={show.status}
           network={show.network}
           premiered={show.premiered}
         />
-      </div>
+      </InfoBlock>
 
-      <div>
+      <InfoBlock>
         <h2>Seasons</h2>
         <Seasons seasons={show._embedded.seasons} />
-      </div>
+      </InfoBlock>
 
-      <div>
-        <h2>Details</h2>
+      <InfoBlock>
+        <h2>Cast</h2>
         <Cast cast={show._embedded.cast} />
-      </div>
-    </div>
+      </InfoBlock>
+    </ShowPageWrapper>
   );
 };
 
