@@ -8,6 +8,7 @@ import { useShows } from "../../misc/custom-hooks";
 
 const ShowGrid = ({ data }) => {
   const [starredShows, dispatchStarred] = useShows();
+
   return (
     <FlexGrid>
       {data.map(({ show }) => {
